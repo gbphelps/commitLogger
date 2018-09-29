@@ -1,9 +1,11 @@
 import React from 'react';
-import * as date from './utils';
-import { DayHeaders } from './dayHeaders'
+import * as utils from './utils';
+import { DayHeaders } from './dayHeaders';
+import { Square2 } from './square';
+import { Bar } from './bar'
 
 
-const f = color => `rgba(${color[0]},${color[1]},${color[2]},${color[3]})`;
+
 
 export class Calendar extends React.Component{
 
@@ -36,6 +38,7 @@ export class Calendar extends React.Component{
     let prev = Array.from(this.state.stored);
     if(prev.length === 1 && i > prev[0]){
       prev.push(i);
+      //TODO store date rather than integer here
       this.setState({stored:prev});
     }else{
       this.setState({stored:[i]});
@@ -125,7 +128,7 @@ export class Calendar extends React.Component{
 
 
   monthBar(){
-    let month = date.months[this.state.displayDate.getMonth()];
+    let month = utils.months[this.state.displayDate.getMonth()];
     let year = this.state.displayDate.getFullYear();
     return (
       <div className='monthBar'>
@@ -151,18 +154,18 @@ export class Calendar extends React.Component{
 
 
   render(){
-    let fwd = date.firstWeekday(this.state.displayDate);
-    let eom = date.endofMonth(this.state.displayDate);
+    let fwd = utils.firstWeekday(this.state.displayDate);
+    let eom = utils.endofMonth(this.state.displayDate);
 
     return (
      <div className='backsplash' style={{
          height:'100%',
          width:'100%',
-         background: f(this.state.color)}}>
+         background: utils.f(this.state.color)}}>
      <div className='calendar'>
        <div className='all'>
         <div className='wrapper'>
-          <Bar animation='rotate-down' content={this.monthBar()}/>
+          <Bar content={this.monthBar()}/>
           <DayHeaders/>
           {this.createCal(fwd,eom)}
         </div>
@@ -172,88 +175,4 @@ export class Calendar extends React.Component{
     );
   }
 
-}
-
-let forward = (color) => ({
-  front: {
-    transform:'translateZ(25px)',
-    background: f(color)
-  },
-
-  left: {
-    transform:'rotateY(-90deg)translateZ(25px)',
-    background: f(color)
-  },
-  right: {
-    transform:'rotateY(90deg)translateZ(25px)',
-    background: f(color)
-  },
-  top: {
-    transform:'rotateX(90deg)translateZ(25px)',
-    background: f(color)
-  },
-  bottom: {
-    transform:'rotateX(-90deg)translateZ(25px)',
-    background: f(color.map(el => el * .8))
-  },
-  back: {
-    transform:'rotateY(180deg)translateZ(25px)',
-    background: f(color)
-  },
-});
-
-function Square2(props){
-  const {front, left, right, bottom, back} = forward(props.color);
-  return (
-    <div className={['square',props.selected,props.display].join(' ')}
-         style={{animationName: props.animation}}
-         onClick={props.onClick}>
-      <div className='face one' style={front}>
-        {props.content}
-      </div>
-      <div className='face two' style={left}/>
-      <div className='face three' style={right}/>
-      <div className='face five' style={bottom}/>
-      <div className='face six' style={back}>
-      </div>
-    </div>
-  );
-}
-
-
-function Bar(props){
-
-  let side = {
-    height: '50px',
-    position:'absolute',
-    top:'0px',
-    width:'100%'
-  };
-
-  let back = {
-    transform: 'rotateY(180deg)translateZ(25px)',
-  };
-
-  let front = {
-    transform: 'translateZ(25px)',
-  };
-
-  let top = {
-    transform: 'rotateX(90deg)translateZ(25px)',
-  }
-
-  let bottom ={
-    transform: 'rotateX(-90deg)translateZ(25px)',
-  }
-
-
-  return(
-  <div className='bar' style={{animationName: props.animation}}>
-      <div className='side' style={Object.assign(front,side)}>
-        {props.content}
-      </div>
-      <div className='side' style={Object.assign(back,side)}/>
-      <div className='side' style={Object.assign(top,side)}/>
-      <div className='side' style={Object.assign(bottom,side)}/>
-    </div>);
 }
