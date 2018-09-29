@@ -3,6 +3,8 @@ import * as date from './utils';
 import { DayHeaders } from './dayHeaders'
 
 
+const f = color => `rgba(${color[0]},${color[1]},${color[2]},${color[3]})`;
+
 export class Calendar extends React.Component{
 
   constructor(props){
@@ -13,6 +15,7 @@ export class Calendar extends React.Component{
       flip:false,
       reverse:true,
       stored: [],
+      color: [255,0,0,1]
     };
   }
 
@@ -53,11 +56,23 @@ export class Calendar extends React.Component{
     return result;
   }
 
+
+  randomColor(){
+    let color = [0,255,Math.floor(Math.random()*256)]
+    for (let i = 0; i < 6; i++){
+      const idx1 = Math.floor(Math.random()*3);
+      const idx2 = Math.floor(Math.random()*3);
+      [color[idx1], color[idx2]] = [color[idx2], color[idx1]]
+    }
+    color.push(1);
+    return color;
+  }
+
   createCal(fwd,eom){
     let holder = [];
     let week = [];
 
-    for(let i=0;i<42;i++){
+    for(let i = 0;i < 42;i++){
       let type = 'nil';
       let content = '';
 
@@ -68,6 +83,7 @@ export class Calendar extends React.Component{
 
       week.push(
         <Square2
+          color={type === 'day' ? this.state.color : [0,0,0,0]}
           display={type}
           key={i}
           content={content}
@@ -87,6 +103,9 @@ export class Calendar extends React.Component{
 
   }
 
+
+
+
   changeMonth(inc){
     let display = new Date(this.state.displayDate.valueOf());
     display.setMonth(display.getMonth() + inc);
@@ -99,7 +118,8 @@ export class Calendar extends React.Component{
        flip: !this.state.flip,
        reverse: direction,
        rotation: rotation+plus,
-       stored: [],}
+       stored: [],
+       color: this.randomColor()}
     );
   }
 
@@ -135,6 +155,10 @@ export class Calendar extends React.Component{
     let eom = date.endofMonth(this.state.displayDate);
 
     return (
+     <div className='backsplash' style={{
+         height:'100%',
+         width:'100%',
+         background: f(this.state.color)}}>
      <div className='calendar'>
        <div className='all'>
         <div className='wrapper'>
@@ -144,34 +168,53 @@ export class Calendar extends React.Component{
         </div>
        </div>
      </div>
+     </div>
     );
   }
 
 }
 
-let forward = {
-  front: {transform:'translateZ(25px)'},
-  left: {transform:'rotateY(-90deg)translateZ(25px)'},
-  right: {transform:'rotateY(90deg)translateZ(25px)'},
-  top: {transform:'rotateX(90deg)translateZ(25px)'},
-  bottom: {transform:'rotateX(-90deg)translateZ(25px)'},
-  back: {transform:'rotateY(180deg)translateZ(25px)'},
-  rot: {transform:''},
-};
+let forward = (color) => ({
+  front: {
+    transform:'translateZ(25px)',
+    background: f(color)
+  },
+
+  left: {
+    transform:'rotateY(-90deg)translateZ(25px)',
+    background: f(color)
+  },
+  right: {
+    transform:'rotateY(90deg)translateZ(25px)',
+    background: f(color)
+  },
+  top: {
+    transform:'rotateX(90deg)translateZ(25px)',
+    background: f(color)
+  },
+  bottom: {
+    transform:'rotateX(-90deg)translateZ(25px)',
+    background: f(color.map(el => el * .8))
+  },
+  back: {
+    transform:'rotateY(180deg)translateZ(25px)',
+    background: f(color)
+  },
+});
 
 function Square2(props){
-
+  const {front, left, right, bottom, back} = forward(props.color);
   return (
     <div className={['square',props.selected,props.display].join(' ')}
          style={{animationName: props.animation}}
          onClick={props.onClick}>
-      <div className='face one' style={forward.front}>
+      <div className='face one' style={front}>
         {props.content}
       </div>
-      <div className='face two' style={forward.left}/>
-      <div className='face three' style={forward.right}/>
-      <div className='face five' style={forward.bottom}/>
-      <div className='face six' style={forward.back}>
+      <div className='face two' style={left}/>
+      <div className='face three' style={right}/>
+      <div className='face five' style={bottom}/>
+      <div className='face six' style={back}>
       </div>
     </div>
   );
@@ -192,7 +235,6 @@ function Bar(props){
   };
 
   let front = {
-    background:'red',
     transform: 'translateZ(25px)',
   };
 

@@ -1,10 +1,10 @@
-#root{}
-
-
-
-.side{
-  background:red;
+html, body, #root{
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
 }
+
 
 .all{
   transform-style:preserve-3d;
@@ -25,18 +25,9 @@
   position:absolute;
   height:100%;
   width:100%;
-/*   transition: background .5s linear; */
   line-height:50px;
   text-align:center;
-/*   backface-visibility:hidden; */
   font-size:30px;
-  background:#b00;
-
-}
-
-
-.one, .two, .three, .four, .six{
-  background:red;
 }
 
 .hcal{
@@ -72,10 +63,6 @@
   transform:translateZ(-50px)translateY(12.5px)rotateX(180deg);
 } */
 
-body{
-  background-color:red;
-}
-
 .monthBar{
   text-transform:uppercase;
   font-weight:700;
@@ -93,21 +80,13 @@ body{
   display:inline;
 }
 
-.day:hover > div{
-  background:aqua;
-}
-
 .day:hover {
   color:black;
 }
 
-
 .dayHeaders{
   transform: translateZ(25px);
 }
-
-
-
 
 .bar{
   height:50px;
@@ -160,37 +139,18 @@ body{
 
 .day:hover{
   transform: translateZ(5px);
-}
-
-.day:hover > .five{
-  background:#0cc;
-}
-
-.selected > .face{
-  background: aqua;
   color:black;
 }
 
-.selected > .five{
-  background:#0cc;
-}
-
-.selected:hover{
-  transform:translateZ(10px);
+.selected.day:hover{
+  transform: translateZ(15px);
 }
 
 .selected {
   transform: translateZ(10px);
-}
-
-.nil > div{
-  background:transparent;
+  color: black;
 }
 
 .nil{
   cursor:default;
-}
-
-.button:hover{
-  color:aqua;
 }
