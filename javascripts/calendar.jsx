@@ -21,6 +21,19 @@ export class Calendar extends React.Component{
     };
   }
 
+
+  componentDidMount(){
+    const gitData = new XMLHttpRequest();
+    gitData.onreadystatechange = () => {
+      if (gitData.readyState === 4 && gitData.status === 200){
+        this.setState({data: gitData.responseText},()=>console.log(this.state.data));
+      }
+    }
+    gitData.open('get','https://api.github.com/search/commits?q=author:gbphelps');
+    gitData.setRequestHeader('Accept', 'application/vnd.github.cloak-preview');
+    gitData.send();
+  }
+
   animation(){
     let suffix = (this.state.flip ? '2' : '');
     let name = (this.state.reverse ? 'rotate-right' : 'rotate-left')
