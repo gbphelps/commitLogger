@@ -18,27 +18,54 @@ export class Calendar extends React.Component{
       reverse:true,
       stored: [],
       color: [255,0,0,1],
-      colorPrincipal: 1
+      colorPrincipal: 1,
     };
+
+    this.data = {}
   }
 
 
-  componentDidMount(){
+  assignData(data){
+    data.items.forEach(item => {
+      const date = item.commit.author.date.slice(0,10);
+      if (!this.data[date]){
+        this.data[date] = [];
+      }
+      this.data[date].push({
+        date: item.commit.author.date,
+        msg: item.commit.message,
+        repo: item.repository.name
+      })
+    })
+  }
+
+
+  paginate(url){
     const gitData = new XMLHttpRequest();
     gitData.onreadystatechange = () => {
       if (gitData.readyState === 4 && gitData.status === 200){
         let data = JSON.parse(gitData.responseText);
-        data = data.items.map(item=>({
-          date: item.commit.author.date,
-          msg: item.commit.message,
-          repo: item.repository.name
-        }))
-        this.setState({ data: data }, ()=> console.log(this.state.data));
+        this.assignData(data);
+        const links = gitData.getResponseHeader('Link').split(', ');
+
+        for (let i = 0; i < links.length; i++){
+          const [url, rel] = links[i].split('; ');
+          if (rel === 'rel="next"'){
+            this.paginate(url.slice(1,-1));
+            return;
+          }
+        }
+
+        console.log(this.data);
       }
     }
-    gitData.open('get','https://api.github.com/search/commits?q=author-date:2018-05-01..2018-06-01+author:gbphelps+user:gbphelps&sort=committer-date');
+    gitData.open('get',url);
     gitData.setRequestHeader('Accept', 'application/vnd.github.cloak-preview');
     gitData.send();
+  }
+
+  componentDidMount(){
+    this.paginate('https://api.github.com/search/commits?q=author-date:2018-05-01..2018-06-01+author:gbphelps+user:gbphelps&sort=committer-date&per_page=100')
   }
 
   animation(){
