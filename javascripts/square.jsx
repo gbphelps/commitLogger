@@ -2,33 +2,40 @@ import React from 'react';
 import { f } from './utils';
 
 
-let forward = (color) => ({
-  front: {
-    transform:'translateZ(25px)',
-    background: f(color)
-  },
+const forward = (color) => {
+  const primary = f(color);
+  const shadow = color.map((el,i)=>{
+    return i === 3 ? el : el*.8
+  });
 
-  left: {
-    transform:'rotateY(-90deg)translateZ(25px)',
-    background: f(color)
-  },
-  right: {
-    transform:'rotateY(90deg)translateZ(25px)',
-    background: f(color)
-  },
-  top: {
-    transform:'rotateX(90deg)translateZ(25px)',
-    background: f(color)
-  },
-  bottom: {
-    transform:'rotateX(-90deg)translateZ(25px)',
-    background: f(color.map(el => el * .8))
-  },
-  back: {
-    transform:'rotateY(180deg)translateZ(25px)',
-    background: f(color)
-  },
-});
+  return {
+    front: {
+      transform:'translateZ(25px)',
+      background: primary
+    },
+
+    left: {
+      transform:'rotateY(-90deg)translateZ(25px)',
+      background: primary
+    },
+    right: {
+      transform:'rotateY(90deg)translateZ(25px)',
+      background: primary
+    },
+    top: {
+      transform:'rotateX(90deg)translateZ(25px)',
+      background: primary
+    },
+    bottom: {
+      transform:'rotateX(-90deg)translateZ(25px)',
+      background: f(shadow)
+    },
+    back: {
+      transform:'rotateY(180deg)translateZ(25px)',
+      background: primary
+    },
+  }
+};
 
 
 export const Square2 = ({
