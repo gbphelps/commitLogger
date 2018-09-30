@@ -17,7 +17,8 @@ export class Calendar extends React.Component{
       flip:false,
       reverse:true,
       stored: [],
-      color: [255,0,0,1]
+      color: [255,0,0,1],
+      colorPrincipal: 1
     };
   }
 
@@ -26,10 +27,16 @@ export class Calendar extends React.Component{
     const gitData = new XMLHttpRequest();
     gitData.onreadystatechange = () => {
       if (gitData.readyState === 4 && gitData.status === 200){
-        this.setState({data: gitData.responseText},()=>console.log(this.state.data));
+        let data = JSON.parse(gitData.responseText);
+        data = data.items.map(item=>({
+          date: item.commit.author.date,
+          msg: item.commit.message,
+          repo: item.repository.name
+        }))
+        this.setState({ data: data }, ()=> console.log(this.state.data));
       }
     }
-    gitData.open('get','https://api.github.com/search/commits?q=author:gbphelps');
+    gitData.open('get','https://api.github.com/search/commits?q=author-date:2018-05-01..2018-06-01+author:gbphelps+user:gbphelps&sort=committer-date');
     gitData.setRequestHeader('Accept', 'application/vnd.github.cloak-preview');
     gitData.send();
   }
@@ -74,13 +81,15 @@ export class Calendar extends React.Component{
 
 
   randomColor(){
-    let color = [0,255,Math.floor(Math.random()*256)]
-    for (let i = 0; i < 6; i++){
-      const idx1 = Math.floor(Math.random()*3);
-      const idx2 = Math.floor(Math.random()*3);
-      [color[idx1], color[idx2]] = [color[idx2], color[idx1]]
-    }
-    color.push(1);
+    const idx = this.state.colorPrincipal;
+    let indices = [0,1,2].filter(index => index !== idx);
+    const otherVals = [0,Math.floor(Math.random()*256)];
+    if (Math.random() > .5) [indices[0], indices[1]] = [indices[1], indices[0]];
+    const color = [];
+    color[idx] = 255;
+    color[indices[0]] = otherVals[0];
+    color[indices[1]] = otherVals[1];
+    color[3] = 1;
     return color;
   }
 
@@ -130,13 +139,15 @@ export class Calendar extends React.Component{
     let plus = inc < 0 ? -180 : 180;
 
     this.setState(
-      {displayDate: display,
-       flip: !this.state.flip,
-       reverse: direction,
-       rotation: rotation+plus,
-       stored: [],
-       color: this.randomColor()}
-    );
+      {
+        displayDate: display,
+        flip: !this.state.flip,
+        reverse: direction,
+        rotation: rotation+plus,
+        stored: [],
+        color: this.randomColor(),
+        colorPrincipal: (this.state.colorPrincipal + 1) % 3
+     });
   }
 
 
