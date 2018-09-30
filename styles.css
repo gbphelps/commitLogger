@@ -80,10 +80,6 @@ html, body, #root{
   display:inline;
 }
 
-.day:hover {
-  color:black;
-}
-
 .dayHeaders{
   transform: translateZ(25px);
 }
@@ -139,7 +135,6 @@ html, body, #root{
 
 .day:hover{
   transform: translateZ(5px);
-  color:black;
 }
 
 .selected.day:hover{

@@ -65,7 +65,7 @@ export class Calendar extends React.Component{
   }
 
   componentDidMount(){
-    this.paginate('https://api.github.com/search/commits?q=author-date:2018-05-01..2018-06-01+author:gbphelps+user:gbphelps&sort=committer-date&per_page=100')
+    //this.paginate('https://api.github.com/search/commits?q=author-date:2018-05-01..2018-06-01+author:gbphelps+user:gbphelps&sort=committer-date&per_page=100')
   }
 
   animation(){
